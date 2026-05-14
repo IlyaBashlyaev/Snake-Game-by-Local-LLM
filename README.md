@@ -349,7 +349,7 @@ This document contains a detailed comparison and rating of 8 Snake games generat
 - Overall, the implementation is functional at a very rudimentary level but lacks any meaningful interactivity.
 - **TL;DR** The low score of 1.4/10 for **llama3.1 8b** snake game reflects several serious shortcomings in its implementation: no user input handling, very basic UI, poor game‑over handling, missing core features, and random movement.
 
-### 17. gemma3 1b - Score: 1.2/10 ⭐
+### 18. gemma3 1b - Score: 1.2/10 ⭐
 **Files:** `index.html`, `script.js`, `style.css`
 
 **Strengths:**
