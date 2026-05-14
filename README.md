@@ -71,7 +71,7 @@ This document contains a detailed comparison and rating of 8 Snake games generat
 | **Gameplay** | Core game mechanics: movement, collision, food spawning, scoring |
 | **UI/UX Design** | Visual appeal, styling, user feedback, game over screens |
 | **Features** | Extra features: pause, restart, high score, mobile controls, responsive design |
-| **Bug Free** | Absence of bugs, proper game state management |
+| **Bug-Free** | Absence of bugs, proper game state management |
 
 ---
 
