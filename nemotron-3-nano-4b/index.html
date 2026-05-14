@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Snake Game (HTML + CSS + JS)</title>
+<style>
+  body { 
+    margin: 0; background:#111; height: 100vh;
+    display:flex; justify-content:center; align-items:center;
+    font-family:Arial,Helvetica,sans-serif; color:#eee;
+  }
+  canvas { background:#222; border:2px solid #444; }
+</style>
+</head>
+<body>
+
+<canvas id="snakeCanvas" width="500" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById('snakeCanvas');
+const ctx = canvas.getContext('2d');
+
+// ---- Configuration -------------------------------------------------
+const width  = canvas.width;
+const height = canvas.height;
+const cellSize = 20;                 // 1 cell = 20px
+const maxLength = 50;                // max snake length
+let game = {
+    snake: [{x:10, y:10}],            // {x, y} are cell coordinates
+    direction: 1,                     // 0:right,1:down,2:left,3:up
+    score: 0,
+    lastFrame: 0,
+    speed: 1000,                      // ms per frame
+    pause: false
+};
+game['food'] = randomFood()
+// --------------------------------------------------------------------
+
+// Helper: random cell inside canvas
+function randomCell() {
+    const x = Math.floor(Math.random() * (width/cellSize));
+    const y = Math.floor(Math.random() * (height/cellSize));
+    return {x, y};
+}
+function randomFood() {
+    let food;
+    do {
+        food = randomCell();
+    } while (game.snake.some(cell => cell.x===food.x && cell.y===food.y));
+    return food;
+}
+
+// Draw the board & snake
+function draw() {
+    ctx.clearRect(0,0,width,height);
+    // snake
+    ctx.fillStyle = '#0f0';
+    game.snake.forEach((seg,i)=>{
+        ctx.fillRect(seg.x*cellSize, seg.y*cellSize, cellSize, cellSize);
+    });
+    // food
+    ctx.fillStyle = 'tomato';
+    ctx.fillRect(game.food.x*cellSize, game.food.y*cellSize, cellSize, cellSize);
+}
+
+// Update game state (called every lastFrame ms)
+function update(time) {
+    if(!game.pause) {
+        const delta = time-game.lastFrame;
+        game.lastFrame = time;
+        if(delta < game.speed) return; // throttling
+
+        // move snake
+        const head = {x: game.snake[0].x, y: game.snake[0].y};
+        switch(game.direction){
+            case 0: head.x++; break;   // right
+            case 1: head.y++; break;   // down
+            case 2: head.x--; break;  // left
+            case 3: head.y--; break;  // up
+        }
+
+        // wrap‑around (optional) or out‑of‑bounds logic
+        // for now: if you hit the border → lose
+        if(head.x<0 || head.x>=width/cellSize || head.y<0 || head.y>=height/cellSize){
+            game = {restart:true, score:0, lastFrame:0};
+        }
+
+        // intersect food?
+        if(head.x===game.food.x && head.y===game.food.y){
+            game.score++;
+            game.food = randomFood();
+            game.snake.push({x:head.x, y:head.y}); // grow
+        } else {
+            game.snake.shift(); // remove tail
+            game.snake.unshift(head); // insert new head
+        }
+        draw();
+    }
+}
+
+// Simple main loop
+function gameLoop(){
+    requestAnimationFrame(tick);
+    clearTimeout(game.timer);
+    game.timer = setTimeout(tick, game.speed);
+}
+function tick(){
+    update(window.requestAnimationFrame(tick));
+}
+game.snake[0].x = 10; game.snake[0].y = 10; // start position
+draw();
+gameLoop();
+
+// ---- Input handling -------------------------------------------------
+const keys = {};
+window.addEventListener('keydown',e=>{
+    switch(e.key){
+        case 'ArrowUp':     if(e.shiftKey) game.pause=!game.pause; else if(!game.pause) game.direction = 3; break;
+        case 'ArrowDown':   if(e.shiftKey) game.pause=!game.pause; else if(!game.pause) game.direction = 1; break;
+        case 'ArrowLeft':   if(e.shiftKey) game.pause=!game.pause; else if(!game.pause) game.direction = 2; break;
+        case 'ArrowRight':  if(e.shiftKey) game.pause=!game.pause; else if(!game.pause) game.direction = 0; break;
+        case 'i':           if(!game.pause) game = {restart:true, score:0, lastFrame:0};
+    }
+});
+// ---------------------------------------------------------------------
+
+// Restart loop on game reset
+if(game.restart){
+    game.restart=false;
+    game.snake = [{x:10,y:10}];
+    game.direction = 1;
+    game.food = randomFood();
+    game.score = 0;
+    game.lastFrame = 0;
+    draw();
+}
+
+// Small pause on Shift (Shift toggles pause)
+window.addEventListener('keydown',e=>{
+    if (e.code === 'ArrowRight') game.direction = 0;
+    else if (e.code === 'ArrowDown') game.direction = 1;
+    else if (e.code === 'ArrowLeft') game.direction = 2;
+    else if (e.code === 'ArrowUp') game.direction = 3;
+
+    else if(e.code==='Shift' && !e.shiftKey){
+        game.pause=!game.pause;
+        clearTimeout(game.timer);
+        clearTimeout(game.pauseTimer);
+        game.pauseTimer = setTimeout(()=>{ if(!game.pause) gameLoop(); else clearTimeout(game.pauseTimer); }, game.speed/2);
+    }
+});
+</script>
+
+</body>
+</html>
+
+<!-- Code generation time: ca. 3 minutes -->

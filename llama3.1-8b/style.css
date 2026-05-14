@@ -1,0 +1,11 @@
+#gameCanvas {
+    border: 1px solid black;
+}
+
+.snake-body {
+    fill: #00698f;
+}
+
+.apple {
+    fill: red;
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        /* CSS STYLES */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        h1 {
+            margin-top: 0;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            font-size: 2rem;
+        }
+
+        canvas {
+            background-color: #000;
+            border: 4px solid #333;
+            box-shadow: 0 0 20px rgba(0, 100, 100, 0.5);
+            display: block;
+        }
+
+        #score-board {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            background: #222;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>NEON SNAKE</h1>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="score-board">Score: 0</div>
+
+    <script>
+        // JAVASCRIPT LOGIC
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreElement = document.getElementById("score-board");
+
+        // Game settings
+        const snake = [
+            { x: 200, y: 200 }, // Head
+            { x: 180, y: 200 },
+            { x: 160, y: 200 }   // Body
+        ];
+        
+        const apple = {
+            x: 50,
+            y: 50
+        };
+
+        // Variables
+        const score = 0;
+        const speed = 100; // ms per frame
+
+        // Input variables
+        let changeX = 0;
+        let changeY = 0;
+        let d = ""; // direction
+
+        // Initialize game by starting with snake body
+        function initGame() {
+            // Set head position to start
+            snake[0].x = 200;
+            snake[0].y = 200;
+            changeX = 0;
+            changeY = 0;
+            d = "";
+
+            // Start with the snake body
+            for (let i = 0; i < snake.length; i++) {
+                snake[i].x = snake[i - 1].x + 20;
+                snake[i].y = snake[i - 1].y + 20;
+            }
+
+            score = 0;
+            scoreElement.innerText = `Score: ${score}`;
+        }
+
+        // Start the game immediately on load
+        window.onload = initGame;
+
+        // Keyboard event listeners
+        document.addEventListener('keydown', key);
+
+        function key(e) {
+            if (e.which === 37) { // Left arrow
+                if (changeX === 0 || changeX === -5) d = "LEFT";
+            } else if (e.which === 38) { // Up arrow
+                if (changeY === 0 || changeY === -5) d = "UP";
+            } else if (e.which === 39) { // Right arrow
+                if (changeX === 0 || changeX === 5) d = "RIGHT";
+            } else if (e.which === 40) { // Down arrow
+                if (changeY === 0 || changeY === 5) d = "DOWN";
+            }
+        }
+
+        function gameLoop() {
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function draw() {
+            // Clear the screen
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Apple
+            ctx.fillStyle = "#ff3333";
+            ctx.beginPath();
+            ctx.arc(apple.x, apple.y, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Snake
+            ctx.fillStyle = "#33ff33";
+            snake.forEach((segment, index) => {
+                ctx.beginPath();
+                ctx.arc(segment.x, segment.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Make the body segments thicker for a retro look
+                if (index === 1 && index === 2) ctx.lineWidth = 20; 
+                if (index === 0 && index === 1) ctx.lineWidth = 10;
+            });
+
+            // Draw Head
+            ctx.fillStyle = "#00ff00"; // Green Head
+            ctx.beginPath();
+            ctx.arc(snake[0].x, snake[0].y, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "white";
+            ctx.stroke();
+        }
+    </script>
+</body>
+</html>
+
+<!-- Code generation time: ca. 3 minutes -->

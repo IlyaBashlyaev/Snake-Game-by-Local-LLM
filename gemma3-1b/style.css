@@ -1,0 +1,39 @@
+body {
+  font-family: sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#game-board {
+  width: 200px;
+  height: 200px;
+  background-color: #3498db; /* A nice green color */
+  position: relative; /* Needed for the player board */
+}
+
+#player-board {
+  width: 100px;
+  height: 100px;
+  background-color: #e74c3c; /* A bright red color */
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+#score {
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+
+#player-board:hover {
+  background-color: #b3d9ff;
+}
+
+
+#game-board:hover {
+  background-color: #3498db;
+}
